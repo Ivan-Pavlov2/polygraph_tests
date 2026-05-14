@@ -1,0 +1,95 @@
+{
+  "cookies": [
+    {
+      "name": "AUTH_SESSION_ID",
+      "value": "MW1KUVRvVWlvcUd2NWlBT3VJTmhtQnA1Li1HQ0dVV3pFV1lyeUZXSEZ5N2s3M0JLdFF0WlgtYlpfaTRGXzBLaUppNFRYWnJ1NkJsb25NV0pjN3B6akF3WGxLS1d4ZVRwY3hRckdoVF81RFNmTnpn",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/polygraph-dev/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KC_AUTH_SESSION_HASH",
+      "value": "KVDYMOMlg6wUKInrIal9daaXoZZuYMGEduPALO2HiEo",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/polygraph-dev/",
+      "expires": 1777293292.566476,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KEYCLOAK_IDENTITY",
+      "value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmNDQzZDg4YS02ZWQyLTQ4ZDctOThjMS1iNGMwNTU0ZGIyMWIifQ.eyJleHAiOjE3NzczMjkyNTIsImlhdCI6MTc3NzI5MzI1MiwianRpIjoiZjZjM2NkNjAtZThhZi1lZGM5LWY5YzAtZGRlMzM0YjNmZmM5IiwiaXNzIjoiaHR0cHM6Ly9hdXRoLnJveWFsc3cucnUvcmVhbG1zL3BvbHlncmFwaC1kZXYiLCJzdWIiOiJmYjBmZTFlZi1jMjBiLTQ5M2ItOTk0OS0xYWY1NDBjNWJkOTAiLCJ0eXAiOiJTZXJpYWxpemVkLUlEIiwic2lkIjoiMW1KUVRvVWlvcUd2NWlBT3VJTmhtQnA1Iiwic3RhdGVfY2hlY2tlciI6IjA1N2d1dHFhMDBfb01mcjRKOE1Ra0hOM2tRMDVPT2x1SjlIT3B0anFYWEEifQ.snKFdIljSfHlNB7XVw85gkhz4xtRSgqKUJhRjFFhrBosGfrDoXPY4RONyf7yA8QvJdyvpEbHRwdv5uo16N2ehA",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/polygraph-dev/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KEYCLOAK_SESSION",
+      "value": "KVDYMOMlg6wUKInrIal9daaXoZZuYMGEduPALO2HiEo",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/polygraph-dev/",
+      "expires": 1777329233.027112,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "AUTH_SESSION_ID",
+      "value": "dWgyVWJnOElXYW95SXhRVEVveWhiM1ViLmtRdncwLWZ2T1psdDVrb3hrTVlBMmptYkhWT1A3Ny13ZWhPM3NyZ3lzdG9XX1JOVUlSa015X0JrN29zdnJ2czdsaFFpV1ZWTlhoQ2hVZ2xvTFh5NHR3",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/rsw/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KC_AUTH_SESSION_HASH",
+      "value": "T2D1MACxtsj1zLTatYaZAAyTlOXMWUuRijhxWqhVCnw",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/rsw/",
+      "expires": 1777293292.775477,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KEYCLOAK_IDENTITY",
+      "value": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0YzVkNTg3Mi0xZDU4LTRlN2ItOTllMC1jY2IxZGI0MjIwNjQifQ.eyJleHAiOjE3Nzc4OTgwNTIsImlhdCI6MTc3NzI5MzI1MiwianRpIjoiMDkyNGY5OWEtM2VlYi04Mzc2LWQ0NDctOTNkMmZiZWY4ZWRhIiwiaXNzIjoiaHR0cHM6Ly9hdXRoLnJveWFsc3cucnUvcmVhbG1zL3JzdyIsInN1YiI6IjMwYjcyMzVmLTZkYmEtNGZiNy1iNDhkLTFmZTYyZWM1MTcwOCIsInR5cCI6IlNlcmlhbGl6ZWQtSUQiLCJzaWQiOiJ1aDJVYmc4SVdhb3lJeFFURW95aGIzVWIiLCJzdGF0ZV9jaGVja2VyIjoidUoxMHZBajY2blVfcGtBUGlXOUNxQ1pvc2ZqdTEtX1QtX085TklMQlZ6WSJ9.jIblh9FnM7lQaFvfdwyGunMvPyZO-7HQULlzsL_x-hOadh2bbCKdi1Q9K4lZDSZ4UGhTcxct9qez3Z_vJEq1bw",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/rsw/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "KEYCLOAK_SESSION",
+      "value": "T2D1MACxtsj1zLTatYaZAAyTlOXMWUuRijhxWqhVCnw",
+      "domain": "auth.royalsw.ru",
+      "path": "/realms/rsw/",
+      "expires": 1777898032.985024,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://polygraph-dev.royalsw.ru",
+      "localStorage": [
+        {
+          "name": "kc-callback-0fef9e62-6796-46b3-bc3e-b7d482a23ee4",
+          "value": "{\"state\":\"0fef9e62-6796-46b3-bc3e-b7d482a23ee4\",\"nonce\":\"5b2ad7f7-e79c-445d-83f8-9c197e01c691\",\"redirectUri\":\"https://polygraph-dev.royalsw.ru/\",\"pkceCodeVerifier\":\"6p45ob0v1iTtmLBBotoSOZhroKfhu3m1d6RBSTVUmMvJho1EcDEn1GEEiHKi123Ki24TsG6j9e6VepgC3AjONa5A1WcTtQo4\",\"expires\":1777296832541}"
+        }
+      ]
+    }
+  ]
+}
