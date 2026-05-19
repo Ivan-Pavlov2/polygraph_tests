@@ -81,7 +81,7 @@ export default class Application {
 		this.patronymicEmpty = page.getByRole('checkbox', { name: 'Нет отчества' });
 		this.job =  page.getByRole('combobox', { name: 'Должность кандидата' });
 		this.jobName = page.getByRole('option', { name: 'Водитель' }).locator('div').nth(2);
-		this.jobName1 = page.getByRole('option', { name: 'Дизайнер' }).locator('div').nth(2);
+		this.jobName1 = page.getByRole('option', { name: 'Главный специалист' }).locator('div').nth(2);
 		this.birthday =  page.locator('label').filter({ hasText: 'Дата рождения' }).getByRole('button');
 		this.bithdayPlace  = page.getByRole('textbox', { name: 'Место рождения кандидата' });
 		this.email  = page.getByRole('textbox', { name: 'Email кандидата' });

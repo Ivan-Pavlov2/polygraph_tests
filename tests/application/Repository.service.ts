@@ -36,7 +36,7 @@ export default class Repository {
 		const result = await request.get(url, headers);
 		expect(result.ok()).toBeTruthy();
 		const rows = (await result.json())?.instances;
-		const ids = rows.map((row) => row.id);
+		const ids = rows.map((row: { id: any; }) => row.id);
 		// console.log(`entityId="${entityId}" instancesCount="${ids.length}"`, '\n' + ids.join('\n'));
 		return ids;
 	};
