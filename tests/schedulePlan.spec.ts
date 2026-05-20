@@ -1,22 +1,31 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, test as base } from '@playwright/test';
 import Application from './pageObjects/application.page';
 import SchedulePlan from './pageObjects/schedulePlan.page';
-import { table } from 'console';
-import { TIMEOUT } from 'dns';
-import { request } from 'http';
+import Auth from './auth.component';
 
-test.beforeEach(async ({ page }) => {
-	await page.goto('/');
+type FixturesPlan = {
+    auth: Auth;
+    schedulePlan: SchedulePlan;
+};
+
+const test = base.extend<FixturesPlan>({ 
+    auth: async ({ page }, use) => {
+        const auth = new Auth(page);
+        await auth.login();
+        await use(auth);
+    },
+    schedulePlan: async ({ page}, use) => {
+        const schedulePlan = new SchedulePlan(page);
+        await use(schedulePlan);
+    }
 });
 
 test.describe('План График', async () => {
-        test('drag and drop', async ({ page }) => { 
-                const schedulePlan = new SchedulePlan(page);
-                
+        test('drag and drop', async ({ page, auth, schedulePlan}) => { 
                 await schedulePlan.timetable.click();
                 const drag = page.locator('.v-schedule__claims__list__item').nth(0);
                 const drop = page.locator('.v-schedule__calendar__right-list__item:not(.v-schedule__calendar__right-list__item--past):not(.v-schedule__calendar__right-list__item--card):not(.v-schedule__calendar__right-list__item--holiday):not(.v-schedule__calendar__right-list__item--vacation-sick)').nth(0);
-    
+
                 await page.waitForTimeout(3000);
                 await drag.dragTo(drop);
 
@@ -24,10 +33,10 @@ test.describe('План График', async () => {
                 response.url().includes('/api/claims/') && 
                 response.url().includes('/lock') && 
                 response.status() === 200);
-        
+
                 await expect(page.locator('.q-card')).toBeVisible();
                 await page.locator('.q-btn__content').filter({ hasText: 'Подтвердить' }).click();
-  
+
                 const response = await page.waitForResponse(response => response.url().includes('/api/claim_examinations') && response.status() === 201);
 
                 await page.waitForResponse(response => 
@@ -38,15 +47,13 @@ test.describe('План График', async () => {
                 const responseBody = await response.json();
 
                 await expect(page.locator('.q-card')).toBeHidden();
-        
+
                 const claimStatus = responseBody.claim.status;
-  
+
                 expect(claimStatus).toBe('scheduled');
         });
 
-         test('Днд требует переноса', async ({ page }) => { 
-                const schedulePlan = new SchedulePlan(page);
-                
+        test('Днд требует переноса', async ({ page, auth, schedulePlan }) => { 
                 await schedulePlan.timetable.click();
                 const drag = page.locator('.v-schedule__claims__list__item--warning').nth(0);
                 const drop = page.locator('.v-schedule__calendar__right-list__item:not(.v-schedule__calendar__right-list__item--past):not(.v-schedule__calendar__right-list__item--card):not(.v-schedule__calendar__right-list__item--holiday):not(.v-schedule__calendar__right-list__item--vacation-sick)').nth(0);
@@ -78,9 +85,7 @@ test.describe('План График', async () => {
                 expect(claimStatus).toBe('scheduled');
         });
 
-        test('Днд Слот не доступен', async ({ page }) => { 
-                const schedulePlan = new SchedulePlan(page);
-                
+        test('Днд Слот не доступен', async ({ page, auth, schedulePlan }) => { 
                 await schedulePlan.timetable.click();
 
                 const drag = page.locator('.v-schedule__claims__list__item').nth(0);
@@ -113,8 +118,7 @@ test.describe('План График', async () => {
                 // await warning.waitFor({ state: 'hidden' });
         });
 
-        test('Проверка выходного на 1 день ', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Проверка выходного на 1 день ', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();
@@ -210,8 +214,7 @@ test.describe('План График', async () => {
                 expect(isSameCell).toBe(true);
         });
 
-        test('Проверка рабочего на 1 день ', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Проверка рабочего на 1 день ', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();
@@ -309,8 +312,7 @@ test.describe('План График', async () => {
                 expect(isSameCell).toBe(false);
         });
 
-        test('Проверка выходного на несколько дней ', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Проверка выходного на несколько дней ', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();
@@ -395,8 +397,7 @@ test.describe('План График', async () => {
                 expect(isSameCell1).toBe(false);
         });
 
-        test('Проверка рабочего на несколько дней ', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Проверка рабочего на несколько дней ', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();
@@ -490,8 +491,7 @@ test.describe('План График', async () => {
                 expect(isSameCell1).toBe(true);
         });
 
-        test('Больничный', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Больничный', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();
@@ -602,8 +602,7 @@ test.describe('План График', async () => {
                 expect(isSameCellSick3).toBe(false);
         });
 
-        test('Отпуск', async ({ page }) => {
-                const schedulePlan = new SchedulePlan(page);
+        test('Отпуск', async ({ page, auth, schedulePlan }) => {
                 const application = new Application(page);
 
                 const workDay = await schedulePlan.getFirstWorkDay();

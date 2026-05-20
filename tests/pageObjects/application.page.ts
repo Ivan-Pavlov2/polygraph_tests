@@ -108,9 +108,7 @@ export default class Application {
 		this.dateFiltr  = page.getByRole('textbox', { name: 'Период исследования' });
 		this.calendar  = page.getByRole('button').filter({ hasText: 'calendar_today' });
 		this.closeBtn  = page.locator('.q-icon').filter({ hasText: 'close' });
-
-
-	}
+	} 
 
 
 }
