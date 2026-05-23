@@ -35,20 +35,6 @@ export default class Auth {
         await this.signIn.click();
         await this.page.waitForTimeout(1000);
     }  
-
-    // async goToSection(sectionNames: string[], settingSystem?: boolean) {
-    //     await this.page.getByRole('heading', { name: 'Все пространства' }).waitFor({ state: 'visible' }); // Проверить что находимся в конструкторе пространств
-
-    //     if (settingSystem){
-    //         await this.goToSettingSystem(); //Перейти в Настройки системы
-    //     } else {
-    //         await this.goToNameSpace(this.testData.nameSpace); // Перейти в Пространство
-    //     }
-
-    //     for (const name of sectionNames) {
-    //         await this.page.getByRole('link', { name: name, exact: true }).click();
-    //     }
-    // }
 }
 
 
