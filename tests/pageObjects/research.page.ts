@@ -28,6 +28,7 @@ export default class Research {
 
     await this.application.saveBtn.click();
     await this.page.waitForTimeout(1000);
+    await this.application.createBtn.nth(0).waitFor({ state: 'visible' });
 
 
     await this.page.getByPlaceholder('Введите фио кандидата, фио заявителя, номер заявки').fill('Тестович');

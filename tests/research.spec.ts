@@ -63,7 +63,7 @@ test.describe('Проведение исследования', () => {
 
             await research.chekAbsence(reason);
             
-            await application.actionBtn.nth(0).click();
+            await application.actionBtn.nth(27).click();
             await application.deleteSection.waitFor({ state: 'visible' });
             await application.deleteSection.click();
             await expect(page.getByText('Удаление')).toBeVisible();
