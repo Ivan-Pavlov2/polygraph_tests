@@ -24,8 +24,6 @@ export default class Research {
   async chekAbsence(reason: string) {
     await this.page.getByRole('checkbox', { name: reason }).click();
 
-    // await this.fillApplicantInfo();
-
     await this.application.saveBtn.click();
     await this.page.waitForTimeout(1000);
     await this.application.createBtn.nth(0).waitFor({ state: 'visible' });

@@ -119,7 +119,6 @@ export default class Application {
 		
 		await this.page.waitForTimeout(1000);
 		
-		// Поиск ячейки через cellPrefix (уже в формате cell-number)
 		const firstCell = this.page.locator(`[id^="${config.cellPrefix}"]`).first();
 		const value: string | null = await firstCell.locator('.v-table__td-value').first().textContent();
 		

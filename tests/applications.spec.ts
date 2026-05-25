@@ -260,7 +260,6 @@ test.describe('Обработка заявок', async () => {
 });
 
 test.describe('Тестирование сортировки таблицы', () => {
-    // Вариант 1: Отдельный тест для каждого поля
     for (const config of columnsConfig) {
         test(`Сортировка по полю "${config.displayName}" должна работать`, async ({ page, application, auth }) => {
             const result: SortingResult = await application.testSorting(config.displayName);
