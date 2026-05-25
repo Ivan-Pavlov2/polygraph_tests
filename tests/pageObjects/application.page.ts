@@ -265,5 +265,31 @@ export const columnsConfig: ColumnConfig[] = [
         displayName: 'Телефон кандидата',
         columnId: 'col-phone',
         cellPrefix: 'cell-phone'
+    },
+    {
+        displayName: 'Email кандидата',
+        columnId: 'col-email',
+        cellPrefix: 'cell-email'
+    },
+    {
+        displayName: 'Должность кандидата',
+        columnId: 'col-jobpositionname',
+        cellPrefix: 'cell-jobPositionName'
+    },
+    {
+        displayName: 'ФИО заявителя',
+        columnId: 'col-contactpersonfullname',
+        cellPrefix: 'cell-contactPersonFullName'
+    },
+    {
+        displayName: 'Наименование юридического лица заявителя',
+        columnId: 'col-organizationname',
+        cellPrefix: 'cell-organizationName'
+    },
+    {
+        displayName: 'Должность заявителя',
+        columnId: 'col-contactpersonworkplace',
+        cellPrefix: 'cell-contactPersonJobPosition'
     }
+	
 ];
