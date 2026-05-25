@@ -289,6 +289,16 @@ export const columnsConfig: ColumnConfig[] = [
         displayName: 'Должность заявителя',
         columnId: 'col-contactpersonworkplace',
         cellPrefix: 'cell-contactPersonJobPosition'
+    },
+    {
+        displayName: 'Дата создания заявки',
+        columnId: 'col-receivedon',
+        cellPrefix: 'cell-receivedOn'
+    },
+    {
+        displayName: 'Полиграфолог',
+        columnId: 'col-examiner-shortfullname',
+        cellPrefix: 'cell-examiner.shortFullName'
     }
 	
 ];
