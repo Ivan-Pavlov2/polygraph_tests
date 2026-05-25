@@ -71,7 +71,7 @@ export default class Application {
 		this.legalEntityName1 = page.getByRole('option', { name: 'ГБНФ' }).locator('div').nth(1);
 		this.applicant = page.locator('div > label:nth-child(2) > .q-field__inner > .q-field__control > .q-field__control-container > .q-field__native').nth(1); // Плохой локатор
 		this.applicantName = page.getByRole('option', { name: 'Шестакова Алла Михайлов' }).locator('div').nth(2);
-		this.applicantName1 = page.getByRole('option', { name: 'Павлов Иван Леонидович' }).locator('div').nth(2);
+		this.applicantName1 = page.getByRole('option', { name: 'Тестов тест Тестович' }).locator('div').nth(2);
 		this.placeJob = page.getByRole('textbox', { name: 'Департамент/ Управление' });
 		this.applicantJob = page.getByRole('textbox', { name: 'Должность заявителя' });
 		this.applicantEmail = page.getByRole('textbox', { name: 'Email заявителя' });
@@ -110,5 +110,61 @@ export default class Application {
 		this.closeBtn  = page.locator('.q-icon').filter({ hasText: 'close' });
 	} 
 
+	 getColumnId(fieldName: string): string {
+        const columnMap: Record<string, string> = {
+            'Номер заявки': 'col-number',
+            'Статус заявки': 'col-status',
+            'Фамилия кандидата': 'col-lastname',
+            'Имя кандидата': 'col-firstname',
+            'Отчество кандидата': 'col-middlename',
+            'Дата рождения кандидата': 'col-birthday',
+            'Место рождения кандидата': 'col-birthplace',
+            'Телефон кандидата': 'col-phone'
+        };
+        return columnMap[fieldName] || `col-${fieldName.toLowerCase()}`;
+    }
 
+
+	async getFirstValue(columnId: string, order: 'asc' | 'desc'): Promise<string> {
+        const sortButton = this.page.locator(`#${columnId}`).locator('.q-btn').filter({ hasText: 'more_vert' });
+		await this.page.locator(`#${columnId}`).filter({ hasText: 'more_vert' }).click();
+        await sortButton.click();
+        
+        const sortText = order === 'asc' ? 'arrow_upward По возрастанию' : 'arrow_downward По убыванию';
+        await this.page.getByText(sortText).click();
+        
+        await this.page.waitForTimeout(300);
+        
+        const baseField = columnId.replace('col-', '');
+        const value = await (this.page.locator(`[id^="cell-${baseField}"]`).first()).textContent();
+        // const value = await firstCell.textContent();
+        
+        return value ? value.trim() : '';
+    }
+
+	async testSorting(fieldName: string) {
+        const columnId = this.getColumnId(fieldName);
+        
+        const descValue = await this.getFirstValue(columnId, 'desc');
+        const ascValue = await this.getFirstValue(columnId, 'asc');
+        
+        return {
+            field: fieldName,
+            success: ascValue !== descValue,
+            ascValue: ascValue,
+            descValue: descValue
+        };
+    }
+
+    async runAllTests(fieldsToTest: string[]) {
+        const results = [];
+        
+        for (const field of fieldsToTest) {
+            const result = await this.testSorting(field);
+            results.push(result);
+            await this.page.waitForTimeout(200);
+        }
+        
+        return results;
+    }
 }

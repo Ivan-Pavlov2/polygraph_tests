@@ -313,4 +313,25 @@ test.describe('Обработка заявок', async () => {
         await application.closeBtn.nth(1).click();
         await application.closeBtn.nth(1).waitFor({ state: 'hidden' });
 	});
+
+});
+
+test.describe('Тестирование сортировки таблицы', () => {
+    const fieldsToTest = [
+        'Номер заявки',
+        'Статус заявки',
+        'Фамилия кандидата',
+        'Имя кандидата',
+        'Отчество кандидата',
+        'Дата рождения кандидата',
+        'Место рождения кандидата',
+        'Телефон кандидата'
+    ];
+
+    for (const field of fieldsToTest) {
+        test(`Сортировка по полю "${field}" должна работать`, async ({ page, auth, application }) => {
+            const result = await application.testSorting(field);
+            expect(result.ascValue).not.toBe(result.descValue);
+        });
+    }
 });
