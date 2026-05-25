@@ -1,5 +1,5 @@
 import { expect, Page, test as base } from '@playwright/test';
-import Application from './pageObjects/application.page';
+import Application, { columnsConfig, SortingResult } from './pageObjects/application.page';
 import Auth from './auth.component';
 
 type FixturesApplication = {
@@ -22,29 +22,7 @@ const test = base.extend<FixturesApplication>({
 test.describe('Обработка заявок', async () => {
 
     test('Создание заявки', async ({ page, application, auth }) => {           
-        await application.createBtn.nth(0).waitFor({ state: 'visible' });
-        await application.createBtn.nth(0).click();
-        await expect(page.getByText('Создание заявки')).toBeVisible();
-        await application.legalEntity.click();
-        await application.legalEntityName1.click();
-        await page.getByText('Создание заявки').click();
-        await application.applicant.click();
-        await application.applicantName1.click();
-        await application.applicantJob.fill('Тестировщик');
-        await application.surname.fill('Тестовый');
-        await application.name.fill('Авто');
-        await application.patronymic.fill('Тест');
-        await application.job.click();
-        await application.jobName.click();
-        await application.bithdayPlace.fill('Москва');
-        await application.phoneNumber.fill('89661326768');
-        await application.email.fill('avtotest@mail.ru');
-        await application.birthday.click();
-        await page.getByRole('button', { name: '1' }).nth(0).click();
-        await page.getByText('Создание заявки').click();
-        await application.createBtn.nth(1).click();
-        await page.waitForTimeout(3000);
-        await expect(page.locator('[id^="cell-contactPersonJobPosition"]').nth(0)).toHaveText('Тестировщик');
+        await application.createApplication()
     });
 
     test('Редактирование заявки', async ({ page, application, auth }) => {
@@ -193,42 +171,7 @@ test.describe('Обработка заявок', async () => {
     });
 
     test('Назначение исследования', async ({ page, application, auth }) => {
-        await application.createBtn.nth(0).waitFor({ state: 'visible' });
-        await application.actionBtn.nth(27).click();
-        await application.sheduleStudy.waitFor({ state: 'visible' });
-        await application.sheduleStudy.click();
-        await expect(page.getByText('Расписание').nth(1)).toBeVisible();
-
-        const response = await page.waitForResponse(response => response.url().includes('/api/claim_examinations/available_slots') && response.status() === 200);
-        const responseBody = await response.json();
-       
-        const availableSlot = responseBody.find((item: any) => 
-            item.availableSlotIds.length > 0
-        );
-
-        const days = availableSlot.date.split('-')[2].replace(/^0+/, '');
-
-        await page.locator('div').filter({ hasText: /^Shemagonov A\.$/ }).click();
-        await page.getByRole('option', { name: 'Гупенко Ю' }).click();
-        await page.getByRole('button', { name: days, exact: true }).click();
-        await page.locator('.v-time-and-date').nth(0).click();
-
-        const [year, month, day] = availableSlot.date.split('-');
-        const formattedDate = `${day}.${month}.${year}`;
-
-        const time = await page.locator('.v-time-and-date').nth(0).innerText()
-
-        if (time === '9:00 - 13:00') {
-            await application.applyBtn.click();
-            await application.confirmBtn.click();
-            await expect(page.locator('[id^="cell-examinedAt"]').nth(0)).toHaveText(`${formattedDate}, 09:00`);
-            await expect(page.locator('[id^="cell-examiner"]').nth(0)).toHaveText('Гупенко Ю.');
-        } else {
-            await application.applyBtn.click();
-            await application.confirmBtn.click();
-            await expect(page.locator('[id^="cell-examinedAt"]').nth(0)).toHaveText(`${formattedDate}, 14:00`);
-            await expect(page.locator('[id^="cell-examiner"]').nth(0)).toHaveText('Гупенко Ю.');
-        }
+        await application.assignmentApplication();
     });
 
     test('Перенос исследования', async ({ page, application, auth }) => {
@@ -317,20 +260,11 @@ test.describe('Обработка заявок', async () => {
 });
 
 test.describe('Тестирование сортировки таблицы', () => {
-    const fieldsToTest = [
-        'Номер заявки',
-        'Статус заявки',
-        'Фамилия кандидата',
-        'Имя кандидата',
-        'Отчество кандидата',
-        'Дата рождения кандидата',
-        'Место рождения кандидата',
-        'Телефон кандидата'
-    ];
-
-    for (const field of fieldsToTest) {
-        test(`Сортировка по полю "${field}" должна работать`, async ({ page, auth, application }) => {
-            const result = await application.testSorting(field);
+    // Вариант 1: Отдельный тест для каждого поля
+    for (const config of columnsConfig) {
+        test(`Сортировка по полю "${config.displayName}" должна работать`, async ({ page, application, auth }) => {
+            const result: SortingResult = await application.testSorting(config.displayName);
+            
             expect(result.ascValue).not.toBe(result.descValue);
         });
     }

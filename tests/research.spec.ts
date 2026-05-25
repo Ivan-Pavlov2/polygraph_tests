@@ -28,33 +28,11 @@ const test = base.extend<FixturesResearch>({
 
 test.describe('Проведение исследования', () => {
 
-    test('test', async ({ page }) => {
-        await page.getByRole('row', { name: '749' }).getByRole('button').click();
-        await page.getByText('Редактировать заявку').click();
-        await page.getByRole('checkbox', { name: 'Медицинский отвод' }).click();
-        await page.getByRole('checkbox', { name: 'Медицинский отвод' }).click();
-        await page.getByRole('checkbox', { name: 'Не явился кандидат' }).click();
-        await page.getByRole('checkbox', { name: 'Не явился кандидат' }).click();
-        await page.getByRole('checkbox', { name: 'Исследование проведено' }).click();
-        await page.getByRole('checkbox', { name: 'Заключение готово' }).click();
-        await page.getByRole('textbox', { name: 'Время начала исследования' }).click();
-        await page.getByRole('button', { name: 'Стоп' }).click();
-        await page.getByRole('textbox', { name: 'Время окончания исследования' }).click();
-        await page.getByText('Загрузите резюме кандидата').click();
-        await page.getByText('Загрузите заключение полиграфолога').click();
-        await page.locator('div').filter({ hasText: 'Редактирование заявкиclose' }).nth(2).setInputFiles('Титульный_лист_отчета_по_практике_Шаблон.docx');
-        await page.locator('#q-portal--dialog--2 form').getByRole('button').filter({ hasText: 'close' }).click();
-        await page.getByRole('button', { name: 'Сохранить' }).click();
-        await page.locator('div').filter({ hasText: /^ФИО заявителя \*closekeyboard_arrow_down$/ }).locator('div').nth(2).click();
-        await page.getByRole('option', { name: 'Иванов Иван' }).locator('div').nth(2).click();
-        await page.getByRole('textbox', { name: 'Департамент/ Управление' }).click();
-        await page.getByRole('textbox', { name: 'Должность заявителя' }).click();
-        await page.getByRole('button', { name: 'Сохранить' }).click();
-        await page.getByRole('textbox', { name: 'Департамент/ Управление' }).click();
-    });
-
     for (const reason of reasonsData) {
         test(`Проверка причины: ${reason}`, async ({ page, auth, application, research }) => {
+            await application.createApplication();
+            await application.assignmentApplication();
+
             await application.createBtn.nth(0).waitFor({ state: 'visible' });
             await application.actionBtn.nth(27).click();
             await application.editBtn.waitFor({ state: 'visible' });
@@ -74,20 +52,22 @@ test.describe('Проведение исследования', () => {
         });
     }
 
-     test(`Проверка назначения времени`, async ({ page, auth, application, research }) => {
-            await application.createBtn.nth(0).waitFor({ state: 'visible' });
-            await application.actionBtn.nth(27).click();
-            await application.editBtn.waitFor({ state: 'visible' });
-            await application.editBtn.click();
-            await expect(page.getByText('Редактирование заявки')).toBeVisible();
+    test(`Проверка назначения времени`, async ({ page, auth, application, research }) => {
+        await application.createApplication();
+        await application.assignmentApplication();
+        await application.createBtn.nth(0).waitFor({ state: 'visible' });
+        await application.actionBtn.nth(27).click();
+        await application.editBtn.waitFor({ state: 'visible' });
+        await application.editBtn.click();
+        await expect(page.getByText('Редактирование заявки')).toBeVisible();
 
 
-            const now = new Date();
-            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const now = new Date();
+        const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-            await page.getByRole('button', { name: 'Старт' }).click();
-            await expect(page.getByRole('textbox', { name: 'Время начала исследования' })).toHaveValue(currentTime);
-            await page.getByRole('button', { name: 'Стоп' }).click();
-            await expect(page.getByRole('textbox', { name: 'Время окончания исследования' })).toHaveValue(currentTime);
-        });
+        await page.getByRole('button', { name: 'Старт' }).click();
+        await expect(page.getByRole('textbox', { name: 'Время начала исследования' })).toHaveValue(currentTime);
+        await page.getByRole('button', { name: 'Стоп' }).click();
+        await expect(page.getByRole('textbox', { name: 'Время окончания исследования' })).toHaveValue(currentTime);
+    });
 });

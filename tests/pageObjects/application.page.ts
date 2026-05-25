@@ -65,11 +65,11 @@ export default class Application {
 		this.applyBtn = page.getByRole('button', { name: 'Применить' });
 		this.confirmBtn = page.getByRole('button', { name: 'Подтвердить' });
 		this.scroll = page.locator('.v-table__container');
-		this.legalEntity = page.locator('div').filter({ hasText: /^Наименование юридического лица заявителя \*keyboard_arrow_down$/ }).locator('div').nth(1);
+		this.legalEntity = page.getByRole('combobox', { name: 'Наименование юридического лица заявителя',  exact: true });
 		this.legalEntityForEdit = page.locator('div').filter({ hasText: /^ГБНФ$/ });
 		this.legalEntityName = page.getByRole('option', { name: 'ЗАО Елена' }).locator('div').nth(1);
 		this.legalEntityName1 = page.getByRole('option', { name: 'ГБНФ' }).locator('div').nth(1);
-		this.applicant = page.locator('div > label:nth-child(2) > .q-field__inner > .q-field__control > .q-field__control-container > .q-field__native').nth(1); // Плохой локатор
+		this.applicant = page.getByRole('combobox', { name: 'ФИО заявителя' ,  exact: true }); // Плохой локатор
 		this.applicantName = page.getByRole('option', { name: 'Шестакова Алла Михайлов' }).locator('div').nth(2);
 		this.applicantName1 = page.getByRole('option', { name: 'Тестов тест Тестович' }).locator('div').nth(2);
 		this.placeJob = page.getByRole('textbox', { name: 'Департамент/ Управление' });
@@ -79,7 +79,7 @@ export default class Application {
 		this.name = page.getByRole('textbox', { name: 'Имя кандидата' });
 		this.patronymic  = page.getByRole('textbox', { name: 'Отчество' });
 		this.patronymicEmpty = page.getByRole('checkbox', { name: 'Нет отчества' });
-		this.job =  page.getByRole('combobox', { name: 'Должность кандидата' });
+		this.job =  page.getByRole('combobox', { name: 'Должность кандидата',  exact: true  });
 		this.jobName = page.getByRole('option', { name: 'Водитель' }).locator('div').nth(2);
 		this.jobName1 = page.getByRole('option', { name: 'Главный специалист' }).locator('div').nth(2);
 		this.birthday =  page.locator('label').filter({ hasText: 'Дата рождения' }).getByRole('button');
@@ -110,61 +110,160 @@ export default class Application {
 		this.closeBtn  = page.locator('.q-icon').filter({ hasText: 'close' });
 	} 
 
-	 getColumnId(fieldName: string): string {
-        const columnMap: Record<string, string> = {
-            'Номер заявки': 'col-number',
-            'Статус заявки': 'col-status',
-            'Фамилия кандидата': 'col-lastname',
-            'Имя кандидата': 'col-firstname',
-            'Отчество кандидата': 'col-middlename',
-            'Дата рождения кандидата': 'col-birthday',
-            'Место рождения кандидата': 'col-birthplace',
-            'Телефон кандидата': 'col-phone'
-        };
-        return columnMap[fieldName] || `col-${fieldName.toLowerCase()}`;
-    }
+	async getFirstValue(config: ColumnConfig, order: 'asc' | 'desc'): Promise<string> {
+		await this.page.locator(`#${config.columnId}`).filter({ hasText: 'more_vert' }).click();
+		await this.page.locator(`#${config.columnId}`).locator('.q-btn').filter({ hasText: 'more_vert' }).click();
+		
+		const sortText: string = order === 'asc' ? 'arrow_upward По возрастанию' : 'arrow_downward По убыванию';
+		await this.page.getByText(sortText).click();
+		
+		await this.page.waitForTimeout(1000);
+		
+		// Поиск ячейки через cellPrefix (уже в формате cell-number)
+		const firstCell = this.page.locator(`[id^="${config.cellPrefix}"]`).first();
+		const value: string | null = await firstCell.locator('.v-table__td-value').first().textContent();
+		
+		return value ? value.trim() : '';
+	}
 
-
-	async getFirstValue(columnId: string, order: 'asc' | 'desc'): Promise<string> {
-        const sortButton = this.page.locator(`#${columnId}`).locator('.q-btn').filter({ hasText: 'more_vert' });
-		await this.page.locator(`#${columnId}`).filter({ hasText: 'more_vert' }).click();
-        await sortButton.click();
+	async testSorting(displayName: string) {
+		const config = columnsConfig.find(c => c.displayName === displayName);
+        if (!config) throw new Error(`Колонка "${displayName}" не найдена`);
         
-        const sortText = order === 'asc' ? 'arrow_upward По возрастанию' : 'arrow_downward По убыванию';
-        await this.page.getByText(sortText).click();
-        
-        await this.page.waitForTimeout(300);
-        
-        const baseField = columnId.replace('col-', '');
-        const value = await (this.page.locator(`[id^="cell-${baseField}"]`).first()).textContent();
-        // const value = await firstCell.textContent();
-        
-        return value ? value.trim() : '';
-    }
-
-	async testSorting(fieldName: string) {
-        const columnId = this.getColumnId(fieldName);
-        
-        const descValue = await this.getFirstValue(columnId, 'desc');
-        const ascValue = await this.getFirstValue(columnId, 'asc');
+        const descValue = await this.getFirstValue(config, 'desc');
+        const ascValue = await this.getFirstValue(config, 'asc');
         
         return {
-            field: fieldName,
-            success: ascValue !== descValue,
+            field: displayName,
             ascValue: ascValue,
-            descValue: descValue
+            descValue: descValue,
+            isDifferent: ascValue !== descValue
         };
     }
 
-    async runAllTests(fieldsToTest: string[]) {
-        const results = [];
-        
-        for (const field of fieldsToTest) {
-            const result = await this.testSorting(field);
-            results.push(result);
-            await this.page.waitForTimeout(200);
+
+	async createApplication() {
+        await this.createBtn.nth(0).waitFor({ state: 'visible' });
+        await this.createBtn.nth(0).click();
+        await expect(this.page.getByText('Создание заявки')).toBeVisible();
+        await this.legalEntity.click();
+		await this.legalEntityName1.waitFor({ state: 'visible' });
+        await this.legalEntityName1.click();
+        await this.page.waitForTimeout(1000);
+        await this.page.getByText('Создание заявки').click();
+        await this.applicant.click();
+		await this.applicantName1.waitFor({ state: 'visible' });
+        await this.applicantName1.click();
+        await this.page.waitForTimeout(1000);
+        await this.applicantJob.fill('Тестировщик');
+        await this.surname.fill('Тестовый');
+        await this.name.fill('Авто');
+        await this.patronymic.fill('Тест');
+        await this.job.click();
+        await this.jobName.click();
+        await this.bithdayPlace.fill('Москва');
+        await this.phoneNumber.fill('89661326768');
+        await this.email.fill('avtotest@mail.ru');
+        await this.birthday.click();
+        await this.page.getByRole('button', { name: '1' }).nth(0).click();
+        await this.page.getByText('Создание заявки').click();
+        await this.createBtn.nth(1).click();
+        await this.page.waitForTimeout(3000);
+        await expect(this.page.locator('[id^="cell-contactPersonJobPosition"]').nth(0)).toHaveText('Тестировщик');
+    }
+
+	async assignmentApplication() {
+        await this.createBtn.nth(0).waitFor({ state: 'visible' });
+        await this.actionBtn.nth(27).click();
+        await this.sheduleStudy.waitFor({ state: 'visible' });
+        await this.sheduleStudy.click();
+        await expect(this.page.getByText('Расписание').nth(1)).toBeVisible();
+
+        const response = await this.page.waitForResponse(response => response.url().includes('/api/claim_examinations/available_slots') && response.status() === 200);
+        const responseBody = await response.json();
+       
+        const availableSlot = responseBody.find((item: any) => 
+            item.availableSlotIds.length > 0
+        );
+
+        const days = availableSlot.date.split('-')[2].replace(/^0+/, '');
+
+        await this.page.locator('div').filter({ hasText: /^Shemagonov A\.$/ }).click();
+        await this.page.getByRole('option', { name: 'Гупенко Ю' }).click();
+        await this.page.getByRole('button', { name: days, exact: true }).click();
+        await this.page.locator('.v-time-and-date').nth(0).click();
+
+        const [year, month, day] = availableSlot.date.split('-');
+        const formattedDate = `${day}.${month}.${year}`;
+
+        const time = await this.page.locator('.v-time-and-date').nth(0).innerText()
+
+        if (time === '9:00 - 13:00') {
+            await this.applyBtn.click();
+            await this.confirmBtn.click();
+            await expect(this.page.locator('[id^="cell-examinedAt"]').nth(0)).toHaveText(`${formattedDate}, 09:00`);
+            await expect(this.page.locator('[id^="cell-examiner"]').nth(0)).toHaveText('Гупенко Ю.');
+        } else {
+            await this.applyBtn.click();
+            await this.confirmBtn.click();
+            await expect(this.page.locator('[id^="cell-examinedAt"]').nth(0)).toHaveText(`${formattedDate}, 14:00`);
+            await expect(this.page.locator('[id^="cell-examiner"]').nth(0)).toHaveText('Гупенко Ю.');
         }
-        
-        return results;
     }
 }
+
+interface ColumnConfig {
+    displayName: string;      
+    columnId: string;         
+    cellPrefix: string;   
+}
+
+export type SortingResult = {
+    field: string;
+    ascValue: string;
+    descValue: string;
+    isDifferent: boolean; 
+};
+
+export const columnsConfig: ColumnConfig[] = [
+    {
+        displayName: 'Номер заявки',
+        columnId: 'col-number',
+        cellPrefix: 'cell-number'
+    },
+    {
+        displayName: 'Статус заявки',
+        columnId: 'col-status',
+        cellPrefix: 'cell-status'
+    },
+    {
+        displayName: 'Фамилия кандидата',
+        columnId: 'col-lastname',
+        cellPrefix: 'cell-lastName'
+    },
+    {
+        displayName: 'Имя кандидата',
+        columnId: 'col-firstname',
+        cellPrefix: 'cell-firstName'
+    },
+    {
+        displayName: 'Отчество кандидата',
+        columnId: 'col-middlename',
+        cellPrefix: 'cell-middleName'
+    },
+    {
+        displayName: 'Дата рождения кандидата',
+        columnId: 'col-birthday',
+        cellPrefix: 'cell-birthday'
+    },
+    {
+        displayName: 'Место рождения кандидата',
+        columnId: 'col-birthplace',
+        cellPrefix: 'cell-birthplace'
+    },
+    {
+        displayName: 'Телефон кандидата',
+        columnId: 'col-phone',
+        cellPrefix: 'cell-phone'
+    }
+];
