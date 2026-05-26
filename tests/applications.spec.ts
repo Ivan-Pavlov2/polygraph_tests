@@ -1,6 +1,6 @@
 import { expect, Page, test as base } from '@playwright/test';
 import Application, { columnsConfig, SortingResult } from './pageObjects/application.page';
-import Auth from './auth.component';
+import Auth from './pageObjects/auth.component';
 
 type FixturesApplication = {
     auth: Auth;

@@ -1,5 +1,5 @@
 import { expect, Page, test as base } from '@playwright/test';
-import Auth from './auth.component';
+import Auth from './pageObjects/auth.component';
 import Setting, { directoriesData } from './pageObjects/setting.page';
 
 type FixturesSetting = {

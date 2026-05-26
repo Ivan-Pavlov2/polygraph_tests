@@ -1,7 +1,7 @@
 import { expect, Page, test as base } from '@playwright/test';
 import Application from './pageObjects/application.page';
 import SchedulePlan from './pageObjects/schedulePlan.page';
-import Auth from './auth.component';
+import Auth from './pageObjects/auth.component';
 
 type FixturesPlan = {
     auth: Auth;

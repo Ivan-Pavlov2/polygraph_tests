@@ -1,5 +1,5 @@
 import { expect, Page, test as base } from '@playwright/test';
-import Auth from './auth.component';
+import Auth from './pageObjects/auth.component';
 import Research, { reasonsData } from './pageObjects/research.page';
 import Application from './pageObjects/application.page';
 
