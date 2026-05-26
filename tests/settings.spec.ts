@@ -22,21 +22,6 @@ const test = base.extend<FixturesSetting>({
 
 test.describe('Комплексное тестирование настроек системы', () => {
 
-    const results: Array<{
-        directory: string;
-        tests: Array<{
-            name: string;
-            status: 'passed' | 'failed';
-            error?: string;
-        }>;
-    }> = [];
-
-    const getErrorMessage = (error: unknown): string => {
-        if (error instanceof Error) return error.message;
-        if (typeof error === 'string') return error;
-        return 'Неизвестная ошибка';
-    };
-
     for (const directory of directoriesData) {
         test(`Полный цикл тестирования: ${directory.name}`, async ({ page, auth, setting }) => {
             const fields = directory.fields(page);
