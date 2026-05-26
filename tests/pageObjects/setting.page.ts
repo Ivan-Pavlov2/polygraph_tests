@@ -10,19 +10,19 @@ export default class Setting {
 	
 	
 
-    constructor(page: Page) {
-		this.page = page;
+  constructor(page: Page) {
+    this.page = page;
 
-        this.addBtn = page.getByRole('button', { name: 'Создать' }).nth(0);
-        this.saveBtn = page.getByRole('button', { name: 'Сохранить' }).nth(0);
-        this.createBtn = page.locator('#q-portal--dialog--1').getByRole('button', { name: 'Создать' });
+    this.addBtn = page.getByRole('button', { name: 'Создать' }).nth(0);
+    this.saveBtn = page.getByRole('button', { name: 'Сохранить' }).nth(0);
+    this.createBtn = page.locator('#q-portal--dialog--1').getByRole('button', { name: 'Создать' });
 
 	}
 
 	async goToSection(sectionName: string) {
 		await this.page.getByRole('button', { name: 'Расширять' }).click();  
-        await this.page.getByText(`fiber_manual_record${sectionName}`).click();
-    }
+    await this.page.getByText(`fiber_manual_record${sectionName}`).click();
+  }
 
 	async goToEdit(fieldName: string) {
 		await this.page.getByRole('row', { name: fieldName }).getByRole('button').click();
